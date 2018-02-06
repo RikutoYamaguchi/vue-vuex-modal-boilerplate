@@ -10,13 +10,14 @@ import {
   SAVE_CALLBACK
 } from './types'
 
+import TRANSITION_NAMES from './transition_names'
 import actions from './actions'
 
 const state = {
   modalNames: [],
   modalParams: [],
   currentIndex: 0,
-  transitionName: 'scale',
+  transitionName: TRANSITION_NAMES.default,
   callback: null,
   deferred: null
 };
@@ -27,10 +28,12 @@ const mutations = {
     state.modalParams.push(params);
   },
   [CLOSE] (state) {
+    state.modalNames = [];
+    state.modalParams = [];
+    state.transitionName = TRANSITION_NAMES.default;
+    state.currentIndex = 0;
     state.callback = null;
     state.deferred = null;
-    state.modalNames = [];
-    state.currentIndex = 0;
   },
   [ADD_INDEX] (state, n) {
     state.currentIndex += n;

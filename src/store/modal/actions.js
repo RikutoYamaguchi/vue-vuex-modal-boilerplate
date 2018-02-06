@@ -10,11 +10,7 @@ import {
   SAVE_CALLBACK
 } from "./types";
 
-const TRANSITION_NAMES = {
-  default: 'scale',
-  forward: 'forward',
-  backward: 'backward'
-};
+import TRANSITION_NAMES from './transition_names'
 
 let promiseStore = null;
 
