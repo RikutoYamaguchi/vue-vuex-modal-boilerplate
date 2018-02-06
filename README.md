@@ -1,4 +1,4 @@
-# vue-vuex-modal-2
+# vue-vuex-modal-boilerplate
 
 > A Vue.js project
 
