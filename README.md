@@ -58,6 +58,17 @@ dfd.then(data => {
 });
 ```
 
+`replace`
+
+現在のモーダルを差し替えます。
+
+```javascript
+store.dispatch('modal/replace', {
+  name: 'ModalName',
+  params: {}
+})
+```
+
 `close`
 
 ```javascript
