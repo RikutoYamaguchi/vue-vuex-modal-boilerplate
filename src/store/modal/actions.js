@@ -70,7 +70,13 @@ export default {
   },
 
   replace({ commit, getters }, { name, params, callback = null, dfd }) {
-    const { currentIndex, deferred } = getters;
+    const { modalLength, currentIndex, deferred } = getters;
+
+    if (modalLength === 0) {
+      console.warn('There is no target modal.');
+      return false;
+    }
+
     commit(APPLY_TRANSITION, { transitionName: TRANSITION_NAMES.none });
     commit(REPLACE, { name, params, callback, index: currentIndex });
 
@@ -112,7 +118,7 @@ export default {
     const nextIndex = currentIndex + n;
 
     if (nextIndex < 0 || modalLength - 1 < nextIndex) {
-      console.warn('There is no target modal. ');
+      console.warn('There is no target modal.');
       return false;
     }
 
@@ -130,7 +136,7 @@ export default {
     const nextIndex = currentIndex + 1;
 
     if (nextIndex > modalLength - 1) {
-      console.warn('There is no target modal. ');
+      console.warn('There is no target modal.');
       return false;
     }
 
@@ -143,7 +149,7 @@ export default {
     const nextIndex = currentIndex - 1;
 
     if (nextIndex < 0) {
-      console.warn('There is no target modal. ');
+      console.warn('There is no target modal.');
       return false;
     }
 
