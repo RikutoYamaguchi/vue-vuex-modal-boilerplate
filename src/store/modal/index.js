@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import {
   PUSH,
+  REPLACE,
   CLOSE,
   ADD_INDEX,
   CHANGE_INDEX,
@@ -26,6 +27,12 @@ const mutations = {
   [PUSH] (state, { name, params = null }) {
     state.modalNames.push(name);
     state.modalParams.push(params);
+  },
+  [REPLACE] (state, { name, params = null, index }) {
+    state.modalNames[index] = name;
+    state.modalParams[index] = params;
+    state.modalNames.splice(index + 1, state.modalNames.length - 1);
+    state.modalParams.splice(index + 1, state.modalParams.length - 1);
   },
   [CLOSE] (state) {
     state.modalNames = [];
@@ -53,6 +60,7 @@ const mutations = {
 };
 
 const getters = {
+  modalNames: state => state.modalNames,
   currentIndex: state => state.currentIndex,
   currentModalName: state => state.modalNames[state.currentIndex] || null,
   currentModalParams: state => state.modalParams[state.currentIndex] || null,

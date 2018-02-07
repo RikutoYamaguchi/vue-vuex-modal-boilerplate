@@ -3,6 +3,7 @@
     <div class="modal-confirm">
       ModalSample2<br>
       <button @click="onClickPush">push ModalSample3</button>
+      <button @click="onClickReplace">replace ModalSample3</button>
     </div>
   </ModalContainer>
 </template>
@@ -16,9 +17,14 @@
       ModalContainer
     },
     methods: {
-      ...mapActions('modal', ['push']),
+      ...mapActions('modal', ['push', 'replace']),
       onClickPush () {
         this.push({
+          name: 'ModalSample3'
+        })
+      },
+      onClickReplace () {
+        this.replace({
           name: 'ModalSample3'
         })
       }

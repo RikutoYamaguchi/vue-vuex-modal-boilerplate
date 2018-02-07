@@ -1,4 +1,5 @@
 export const PUSH = 'push';
+export const REPLACE = 'replace';
 export const CLOSE = 'close';
 
 export const ADD_INDEX = 'add_index';

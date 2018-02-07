@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import {
   PUSH,
+  REPLACE,
   CLOSE,
   ADD_INDEX,
   CHANGE_INDEX,
@@ -14,10 +15,24 @@ import TRANSITION_NAMES from './transition_names'
 
 let promiseStore = null;
 
+const createDeferred = (commit) => {
+  // create deferred
+  let _resolve = null;
+  let _reject = null;
+  promiseStore = new Promise((resolve, reject) => {
+    _resolve = resolve;
+    _reject = reject;
+  });
+  commit(INIT_DEFERRED, {
+    resolve: _resolve,
+    reject: _reject
+  });
+};
+
 export default {
-  push({ commit, getters }, { name, params, callback = null, dfd }) {
+  push({ commit, getters, dispatch }, { name, params, callback = null, dfd }) {
     // save before modalNames length
-    const { modalLength, deferred } = getters;
+    const { modalLength, deferred, modalNames, currentIndex } = getters;
 
     // decide transition name
     if (modalLength > 0) {
@@ -26,9 +41,17 @@ export default {
       commit(APPLY_TRANSITION, { transitionName: TRANSITION_NAMES.default });
     }
 
-    // push modal
-    commit(PUSH, { name, params });
-    _.delay(() => commit(CHANGE_INDEX, modalLength), 1);
+    const nextIndex = modalLength === 0 ? 0 : currentIndex + 1;
+
+    if (modalNames[nextIndex]) {
+      // already modal exist
+      commit(REPLACE, { name, params, index: nextIndex });
+    } else {
+      // push modal
+      commit(PUSH, { name, params });
+    }
+
+    _.delay(() => commit(CHANGE_INDEX, nextIndex), 1);
 
     // save callback
     if (callback !== null) {
@@ -36,17 +59,21 @@ export default {
     }
 
     if (deferred === null) {
-      // create deferred
-      let _resolve = null;
-      let _reject = null;
-      promiseStore = new Promise((resolve, reject) => {
-        _resolve = resolve;
-        _reject = reject;
-      });
-      commit(INIT_DEFERRED, {
-        resolve: _resolve,
-        reject: _reject
-      });
+      createDeferred(commit);
+    }
+
+    if (dfd) {
+      return promiseStore;
+    }
+  },
+
+  replace({ commit, getters }, { name, params, callback = null, dfd }) {
+    const { currentIndex, deferred } = getters;
+    commit(APPLY_TRANSITION, { transitionName: TRANSITION_NAMES.none });
+    commit(REPLACE, { name, params, index: currentIndex });
+
+    if (deferred === null) {
+      createDeferred(commit);
     }
 
     if (dfd) {
