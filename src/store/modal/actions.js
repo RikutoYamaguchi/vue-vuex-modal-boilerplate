@@ -7,8 +7,7 @@ import {
   ADD_INDEX,
   CHANGE_INDEX,
   APPLY_TRANSITION,
-  INIT_DEFERRED,
-  SAVE_CALLBACK
+  INIT_DEFERRED
 } from "./types";
 
 import TRANSITION_NAMES from './transition_names'
@@ -29,6 +28,14 @@ const createDeferred = (commit) => {
   });
 };
 
+const execCallbacks = (callbacks, params) => {
+  _.each(callbacks, callback => {
+    if (_.isFunction(callback)) {
+      callback(params.err, params.data)
+    }
+  });
+};
+
 export default {
   push({ commit, getters, dispatch }, { name, params, callback = null, dfd }) {
     // save before modalNames length
@@ -45,18 +52,13 @@ export default {
 
     if (modalNames[nextIndex]) {
       // already modal exist
-      commit(REPLACE, { name, params, index: nextIndex });
+      commit(REPLACE, { name, params, callback, index: nextIndex });
     } else {
       // push modal
-      commit(PUSH, { name, params });
+      commit(PUSH, { name, params, callback });
     }
 
     _.delay(() => commit(CHANGE_INDEX, nextIndex), 1);
-
-    // save callback
-    if (callback !== null) {
-      commit(SAVE_CALLBACK, callback);
-    }
 
     if (deferred === null) {
       createDeferred(commit);
@@ -70,7 +72,7 @@ export default {
   replace({ commit, getters }, { name, params, callback = null, dfd }) {
     const { currentIndex, deferred } = getters;
     commit(APPLY_TRANSITION, { transitionName: TRANSITION_NAMES.none });
-    commit(REPLACE, { name, params, index: currentIndex });
+    commit(REPLACE, { name, params, callback, index: currentIndex });
 
     if (deferred === null) {
       createDeferred(commit);
@@ -88,10 +90,8 @@ export default {
   },
 
   reject({ dispatch, getters }, err = null) {
-    const { callback, deferred } = getters;
-    if (_.isFunction(callback)) {
-      callback({ message: 'rejected' }, err);
-    }
+    const { callbacks, deferred } = getters;
+    execCallbacks(callbacks, { err, data: null });
     if (deferred !== null) {
       deferred.reject(err);
     }
@@ -99,10 +99,8 @@ export default {
   },
 
   resolve({ dispatch, getters }, data) {
-    const { callback, deferred } = getters;
-    if (_.isFunction(callback)) {
-      callback(null ,data);
-    }
+    const { callbacks, deferred } = getters;
+    execCallbacks(callbacks, { err: null, data });
     if (deferred !== null) {
       deferred.resolve(data);
     }

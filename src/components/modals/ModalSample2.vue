@@ -25,7 +25,12 @@
       },
       onClickReplace () {
         this.replace({
-          name: 'ModalSample3'
+          name: 'ModalSample3',
+          callback: (err, data) => {
+            console.log('replace method callback');
+            console.log(err);
+            console.log(data);
+          }
         })
       }
     }

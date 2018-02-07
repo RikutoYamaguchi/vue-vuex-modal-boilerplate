@@ -7,8 +7,7 @@ import {
   ADD_INDEX,
   CHANGE_INDEX,
   APPLY_TRANSITION,
-  INIT_DEFERRED,
-  SAVE_CALLBACK
+  INIT_DEFERRED
 } from './types'
 
 import TRANSITION_NAMES from './transition_names'
@@ -19,27 +18,30 @@ const state = {
   modalParams: [],
   currentIndex: 0,
   transitionName: TRANSITION_NAMES.default,
-  callback: null,
+  callbacks: [],
   deferred: null
 };
 
 const mutations = {
-  [PUSH] (state, { name, params = null }) {
+  [PUSH] (state, { name, params = null, callback }) {
     state.modalNames.push(name);
     state.modalParams.push(params);
+    state.callbacks.push(callback);
   },
-  [REPLACE] (state, { name, params = null, index }) {
+  [REPLACE] (state, { name, params = null, callback, index }) {
     state.modalNames[index] = name;
     state.modalParams[index] = params;
+    state.callbacks[index] = callback;
     state.modalNames.splice(index + 1, state.modalNames.length - 1);
     state.modalParams.splice(index + 1, state.modalParams.length - 1);
+    state.callbacks.splice(index + 1, state.callbacks.length - 1);
   },
   [CLOSE] (state) {
     state.modalNames = [];
     state.modalParams = [];
     state.transitionName = TRANSITION_NAMES.default;
     state.currentIndex = 0;
-    state.callback = null;
+    state.callbacks = [];
     state.deferred = null;
   },
   [ADD_INDEX] (state, n) {
@@ -53,9 +55,6 @@ const mutations = {
   },
   [INIT_DEFERRED] (state, { resolve, reject }) {
     state.deferred = { resolve, reject };
-  },
-  [SAVE_CALLBACK] (state, cb) {
-    state.callback = cb;
   }
 };
 
@@ -68,7 +67,7 @@ const getters = {
   isShow: (state, getters) => !_.isEmpty(getters.currentModalName),
   transitionName: state => state.transitionName,
   deferred: state => state.deferred,
-  callback: state => state.callback,
+  callbacks: state => state.callbacks,
 };
 
 export default {
