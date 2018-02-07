@@ -1,5 +1,7 @@
 # vue-vuex-modal-boilerplate
 
+[sample](https://rikutoyamaguchi.github.io/vue-vuex-modal-boilerplate/index.html)
+
 ## Introduction
 
 このリポジトリはVue/Vuexを用いてモーダルを管理するためのテンプレです。
