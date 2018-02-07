@@ -14,6 +14,13 @@ modalモジュールには以下の機能を実装しています。
 
 履歴を追える部分は`vue-router`のメソッドを参考にしています。
 
+### callback & Deferred resolve/rejectのタイミング
+
+`actions.resolve` `actions.reject` が実行されるタイミングまで、
+すべてのcallbackやDeferred resolve/rejectは実行されません。
+
+TODO: callbackに関してはcurrentIndexが移動したタイミングで実行するように指定できるようにするか検討
+
 ## State Structure
 
 - modalNames: Array
@@ -65,7 +72,10 @@ dfd.then(data => {
 ```javascript
 store.dispatch('modal/replace', {
   name: 'ModalName',
-  params: {}
+  params: {},
+  callback: () => {
+  },
+  dfd: false
 })
 ```
 
