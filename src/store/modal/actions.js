@@ -15,7 +15,6 @@ import TRANSITION_NAMES from './transition_names'
 let promiseStore = null;
 
 const createDeferred = (commit) => {
-  // create deferred
   let _resolve = null;
   let _reject = null;
   promiseStore = new Promise((resolve, reject) => {
@@ -38,7 +37,6 @@ const execCallbacks = (callbacks, params) => {
 
 export default {
   push({ commit, getters, dispatch }, { name, params, callback = null, dfd }) {
-    // save before modalNames length
     const { modalLength, deferred, modalNames, currentIndex } = getters;
 
     // decide transition name
@@ -131,7 +129,6 @@ export default {
   },
 
   forward({ commit, getters }) {
-
     const { modalLength, currentIndex } = getters;
     const nextIndex = currentIndex + 1;
 

@@ -1,4 +1,3 @@
-
 export default {
   none: '',
   default: 'scale',
